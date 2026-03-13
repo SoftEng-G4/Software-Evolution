@@ -34,7 +34,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "io.github.softeng_g8.software_evolution"
+    mainClass = "io.github.softeng_g8.software_evolution.BankTransactionSystemGUI"
 }
 
 tasks.named<Test>("test") {
