@@ -5,24 +5,24 @@ import io.github.softeng_g8.software_evolution.AmountValidator;
 import javax.swing.*;
 
 /**
- * Background Worker for Deposits.
+ * Refactored Background Worker for Withdrawals.
  * * WHY THE CHANGES?
- * 1. PROACTIVE VALIDATION: The previous version used a 'try-catch' block to handle errors. 
- * The modern approach uses the AmountValidator to check input format before attempting to process it.
  * 
- * 2. USER FEEDBACK: Instead of silently failing when an error occurs, 
- * we now utilise an 'isInputValid' flag to trigger a pop-up dialogue for the user.
+ * 1. ARCHITECTURAL UNIFORMITY: Both deposit and withdrawal now follow the same 'Worker' pattern. 
+ * This makes the code much easier for future developers to maintain and debug.
  * 
- * 3. FORMATTING: Financial data should be precise. We use String.format to ensure the 
- * balance always displays with two decimal places (e.g. £10.00) for a professional look.
+ * 2. THREAD SAFETY: Previously, the withdrawal was handled by a manual Thread. 
+ * Using SwingWorker ensures that UI updates (like changing the balance label) are handled 
+ * 
+ * safely on the Event Dispatch Thread (EDT).
  */
-public class DepositWorker extends SwingWorker<Void, Void> {
+public class WithdrawWorker extends SwingWorker<Void, Void> {
     private final JLabel balanceLabel;
     private final BankAccount account;
     private final JTextField amountText;
     private boolean isInputValid = true;
 
-    public DepositWorker(JLabel balanceLabel, BankAccount account, JTextField amountText) {
+    public WithdrawWorker(JLabel balanceLabel, BankAccount account, JTextField amountText) {
         this.balanceLabel = balanceLabel;
         this.account = account;
         this.amountText = amountText;
@@ -31,12 +31,9 @@ public class DepositWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         String input = amountText.getText();
-        
-        // Modern logic: Organise validation through a dedicated utility class
         if (AmountValidator.isValidAmount(input)) {
-            account.deposit(Double.parseDouble(input));
+            account.withdraw(Double.parseDouble(input));
         } else {
-            // Signal a failure to the 'done' method
             isInputValid = false;
         }
         return null;
@@ -45,14 +42,12 @@ public class DepositWorker extends SwingWorker<Void, Void> {
     @Override
     protected void done() {
         if (!isInputValid) {
-            // prompt for the user
             JOptionPane.showMessageDialog(null, 
                 AmountValidator.ERROR_MESSAGE, 
                 "Input Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
         amountText.setText("");
-        // Ensure consistent two-decimal display 
         balanceLabel.setText("Balance: " + String.format("%.2f", account.getBalance()));
     }
 }
