@@ -1,5 +1,7 @@
 package io.github.softeng_g8.software_evolution;
 
+import io.github.softeng_g8.software_evolution.actions.DepositWorker;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -36,13 +38,8 @@ public class BankTransactionSystemGUI {
         frame.setVisible(true);
 
         // Action for deposit
-        depositButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                double amount = Double.parseDouble(depositField.getText());
-                new Thread(() -> account.deposit(amount)).start();
-                balanceLabel.setText("Balance: " + account.getBalance());
-            }
+        depositButton.addActionListener((ActionEvent e) -> {
+            new DepositWorker(balanceLabel, account, depositField).execute();
         });
 
         // Action for withdrawal
