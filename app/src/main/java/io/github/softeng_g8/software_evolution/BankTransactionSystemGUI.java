@@ -145,7 +145,8 @@ public class BankTransactionSystemGUI {
             resetToInitialState();
         } else {
             currentMode = mode;
-            withdrawBtn.setVisible(mode.equals("WITHDRAW"));
+            withdrawBtn.setText(mode.equals("WITHDRAW") ? "Cancel" : "Withdraw");
+            styleButton(withdrawBtn, new Color(227, 10, 41, 207));
             depositBtn.setVisible(mode.equals("DEPOSIT"));
             confirmBtn.setVisible(true);
             amountField.setVisible(true);
@@ -156,6 +157,8 @@ public class BankTransactionSystemGUI {
     private void resetToInitialState() {
         currentMode = "NONE";
         withdrawBtn.setVisible(true);
+        styleButton(withdrawBtn, new Color(150, 130, 255));
+        withdrawBtn.setText("Withdraw");
         depositBtn.setVisible(true);
         confirmBtn.setVisible(false);
         amountField.setVisible(false);
