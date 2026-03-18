@@ -6,15 +6,9 @@ import javax.swing.*;
 
 /**
  * Background Worker for Deposits.
- * * WHY THE CHANGES?
- * 1. PROACTIVE VALIDATION: The previous version used a 'try-catch' block to handle errors. 
- * The modern approach uses the AmountValidator to check input format before attempting to process it.
- * 
- * 2. USER FEEDBACK: Instead of silently failing when an error occurs, 
- * we now utilise an 'isInputValid' flag to trigger a pop-up dialogue for the user.
- * 
- * 3. FORMATTING: Financial data should be precise. We use String.format to ensure the 
- * balance always displays with two decimal places (e.g. £10.00) for a professional look.
+ * * UI UNIFICATION UPDATE:
+ * Removed the "Balance: " prefix to ensure visual consistency with the withdrawal 
+ * worker and the latest UI mockups. Now only displays the currency symbol and amount.
  */
 public class DepositWorker extends SwingWorker<Void, Void> {
     private final JLabel balanceLabel;
@@ -31,12 +25,9 @@ public class DepositWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         String input = amountText.getText();
-        
-        // Modern logic: Organise validation through a dedicated utility class
         if (AmountValidator.isValidAmount(input)) {
             account.deposit(Double.parseDouble(input));
         } else {
-            // Signal a failure to the 'done' method
             isInputValid = false;
         }
         return null;
@@ -45,14 +36,10 @@ public class DepositWorker extends SwingWorker<Void, Void> {
     @Override
     protected void done() {
         if (!isInputValid) {
-            // prompt for the user
-            JOptionPane.showMessageDialog(null, 
-                AmountValidator.ERROR_MESSAGE, 
-                "Input Error", 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, AmountValidator.ERROR_MESSAGE, "Input Error", JOptionPane.ERROR_MESSAGE);
         }
         amountText.setText("");
-        // Ensure consistent two-decimal display 
-        balanceLabel.setText("Balance: " + String.format("%.2f", account.getBalance()));
+        // Standardised display to match the withdraw worker format: £XXXX.XX
+        balanceLabel.setText("£" + String.format("%.2f", account.getBalance()));
     }
 }
