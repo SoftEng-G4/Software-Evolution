@@ -34,6 +34,12 @@ application {
     mainClass = "io.github.softeng_g8.software_evolution.BankTransactionSystemGUI"
 }
 
+tasks.jar {
+    manifest {
+        attributes("Main-Class" to application.mainClass)
+    }
+}
+
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
