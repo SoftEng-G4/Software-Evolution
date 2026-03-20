@@ -1,2 +1,1 @@
-fart
-walk away
+
